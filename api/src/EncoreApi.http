@@ -1,0 +1,6 @@
+@EncoreApi_HostAddress = http://localhost:5275
+
+GET {{EncoreApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
