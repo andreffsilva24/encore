@@ -70,3 +70,18 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       Kafka__BootstrapServers: kafka:29092
+
+  order-db:
+    image: postgres:16
+    container_name: encore-order-db
+    environment:
+      POSTGRES_DB: encore_orders
+      POSTGRES_USER: encore
+      POSTGRES_PASSWORD: encore
+    ports:
+      - "5432:5432"
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+
+volumes:
+  order-db-data: {}
