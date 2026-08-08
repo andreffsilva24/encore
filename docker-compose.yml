@@ -56,3 +56,17 @@ services:
       
       echo 'Topics created.'
       "
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: encore-api
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      Kafka__BootstrapServers: kafka:29092
