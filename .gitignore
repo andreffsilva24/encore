@@ -483,3 +483,13 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 /api/ca-certs.pem
+
+# Java build output
+**/target/
+
+# Maven wrapper
+!**/mvnw
+!**/mvnw.cmd
+
+# IntelliJ (already have .idea/ but adding more)
+*.iml
