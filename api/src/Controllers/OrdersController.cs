@@ -8,17 +8,20 @@ namespace EncoreApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public class OrdersController : ControllerBase
+public class OrdersController: ControllerBase
 {
     private readonly KafkaProducerService _producer;
     private readonly ILogger<OrdersController> _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public OrdersController(
         KafkaProducerService producer,
-        ILogger<OrdersController> logger)
+        ILogger<OrdersController> logger,
+        IHttpClientFactory httpClientFactory)
     {
         _producer = producer;
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
     }
 
     [HttpPost]
@@ -56,14 +59,22 @@ public class OrdersController : ControllerBase
     [HttpGet("{orderId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetOrder(Guid orderId)
+    public async Task<IActionResult> GetOrder(Guid orderId)
     {
-        // TODO: query Order Service once read model is available
-        return Ok(new
+        var client = _httpClientFactory.CreateClient("OrderService");
+        var response = await client.GetAsync($"/api/orders/{orderId}");
+
+        if (response.IsSuccessStatusCode)
         {
-            orderId,
-            status = "PENDING",
-            note = "Full order status will be available once the Order Service read model is implemented."
-        });
+            var content = await response.Content.ReadAsStringAsync();
+            return Content(content, "application/json");
+        }
+
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            return NotFound(new { message = $"Order {orderId} not found." });
+
+        _logger.LogError("Order Service returned {StatusCode} for order {OrderId}", response.StatusCode, orderId);
+
+        return StatusCode(502, new { message = "Order Service unavailable." });
     }
 }

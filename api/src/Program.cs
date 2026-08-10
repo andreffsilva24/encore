@@ -25,6 +25,12 @@ builder.Services.AddSingleton<IProducer<string, string>>(sp =>
 });
 builder.Services.AddSingleton<KafkaProducerService>();
 
+builder.Services.AddHttpClient("OrderService", client =>
+{
+    client.BaseAddress = new Uri(
+        builder.Configuration["OrderService:BaseUrl"] ?? "http://localhost:8081");
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
