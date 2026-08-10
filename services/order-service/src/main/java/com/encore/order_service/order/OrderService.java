@@ -20,7 +20,7 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderRequestedEvent event) {
         Order order = new Order();
-        order.setId(event.orderId());
+        order.setOrderId(event.orderId());
         order.setEventId(event.eventId());
         order.setUserId(event.userId());
         order.setSeatIds(event.seatIds());
@@ -28,7 +28,7 @@ public class OrderService {
         order.setRequestedAt(event.requestedAt());
 
         orderRepository.save(order);
-        log.info("Order {} created with status PENDING", order.getId());
+        log.info("Order {} created with status PENDING", order.getOrderId());
         return order;
     }
 

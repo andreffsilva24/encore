@@ -1,5 +1,5 @@
 CREATE TABLE orders (
-                        id UUID PRIMARY KEY,
+                        order_id UUID PRIMARY KEY,
                         event_id UUID NOT NULL,
                         user_id UUID NOT NULL,
                         status VARCHAR(20) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE order_seats (
-                             order_id UUID NOT NULL REFERENCES orders(id),
+                             order_id UUID NOT NULL REFERENCES orders(order_id),
                              seat_id VARCHAR(20) NOT NULL,
                              PRIMARY KEY (order_id, seat_id)
 );

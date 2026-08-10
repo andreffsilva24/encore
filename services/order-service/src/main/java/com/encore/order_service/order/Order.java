@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Order {
 
     @Id
-    private UUID id;
+    private UUID orderId;
 
     @Column(nullable = false)
     private UUID eventId;
