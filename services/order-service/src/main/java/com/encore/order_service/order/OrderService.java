@@ -42,8 +42,10 @@ public class OrderService {
         updateStatus(orderId, OrderStatus.CANCELLED);
     }
 
-    public Optional<Order> findById(UUID orderId) {
-        return orderRepository.findById(orderId);
+    @Transactional(readOnly = true)
+    public Optional<OrderResponse> findOrderResponseById(UUID orderId) {
+        return orderRepository.findById(orderId)
+                .map(OrderResponse::from);
     }
 
     private void updateStatus(UUID orderId, OrderStatus status) {
