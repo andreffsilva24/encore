@@ -483,6 +483,7 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 /api/ca-certs.pem
+/services/notification-service/ca-certs.pem
 
 # Java build output
 **/target/

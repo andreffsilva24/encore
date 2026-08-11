@@ -147,6 +147,23 @@ services:
       SPRING_DATASOURCE_USERNAME: encore
       SPRING_DATASOURCE_PASSWORD: encore
 
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: encore-notification-service
+    depends_on:
+      - kafka
+      - user-service
+    ports:
+      - "8083:8083"
+    environment:
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_URL: https://api.resend.com/emails
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SERVICES_USER_SERVICE_URL: http://user-service:8084
+      SERVICES_ORDER_SERVICE_URL: http://order-service:8081
+
 volumes:
   order-db-data: {}
   user-db-data: {}
