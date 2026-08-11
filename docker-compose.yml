@@ -121,5 +121,32 @@ services:
       SPRING_DATA_REDIS_PORT: 6379
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
 
+  user-db:
+    image: postgres:16
+    container_name: encore-user-db
+    environment:
+      POSTGRES_DB: encore_users
+      POSTGRES_USER: encore
+      POSTGRES_PASSWORD: encore
+    ports:
+      - "5433:5432"
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+    container_name: encore-user-service
+    depends_on:
+      - user-db
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/encore_users
+      SPRING_DATASOURCE_USERNAME: encore
+      SPRING_DATASOURCE_PASSWORD: encore
+
 volumes:
   order-db-data: {}
+  user-db-data: {}
