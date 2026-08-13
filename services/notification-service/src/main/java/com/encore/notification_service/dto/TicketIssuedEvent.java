@@ -1,4 +1,4 @@
-package com.encore.fulfillment_service.dto;
+package com.encore.notification_service.dto;
 
 import java.util.List;
 import java.util.UUID;

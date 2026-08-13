@@ -1,6 +1,7 @@
 package com.encore.notification_service.notification;
 
 import com.encore.notification_service.dto.OrderStatusEvent;
+import com.encore.notification_service.dto.TicketIssuedEvent;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
@@ -38,6 +39,26 @@ public class NotificationService {
     @Value("${resend.url}")
     private String resendUrl;
 
+
+    public void sendTicketIssued(@NonNull TicketIssuedEvent ticketIssuedEvent) {
+
+        String email = getUserEmail(ticketIssuedEvent.userId());
+        if (email == null) return;
+
+        String body = String.format(
+                "<h2>Your ticket is ready!</h2>" +
+                        "<p>Order ID: <strong>%s</strong></p>" +
+                        "<p>Seats: <strong>%s</strong></p>" +
+                        "<p>Present this QR code at the venue:</p>" +
+                        "<img src='data:image/png;base64,%s' alt='Your ticket QR code' width='300' height='300'/>",
+                ticketIssuedEvent.orderId(),
+                String.join(", ", ticketIssuedEvent.seatIds()),
+                ticketIssuedEvent.encodedTicketData()
+        );
+
+        sendEmail(email, "Ticket Issued — Encore", body);
+        log.info("[NOTIFICATION] Ticket issued email sent for order {}", ticketIssuedEvent.orderId());
+    }
 
     public void sendOrderConfirmed(@NonNull OrderStatusEvent event) {
         UUID userId = getUserIdFromOrder(event.orderId());
