@@ -484,6 +484,7 @@ $RECYCLE.BIN/
 *.swp
 /api/ca-certs.pem
 /services/notification-service/ca-certs.pem
+/services/fulfillment-service/ca-certs.pem
 
 # Java build output
 **/target/
