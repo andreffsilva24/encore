@@ -1,8 +1,7 @@
 package com.encore.user_service.dto;
 
-
-public record CreateUserRequest(
-    String name,
+public record LoginRequest (
     String email,
     String password
 ) {}
+

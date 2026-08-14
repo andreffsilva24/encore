@@ -22,6 +22,9 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    private String passwordHash;
+
+    @Column(nullable = false)
     private OffsetDateTime createdAt;
 
 }

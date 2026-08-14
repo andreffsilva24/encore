@@ -1,10 +1,12 @@
 using EncoreApi.Kafka;
 using EncoreApi.Models.Events;
 using EncoreApi.Models.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EncoreApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]

@@ -1,6 +1,10 @@
+using System.Text;
 using System.Text.Json;
 using Confluent.Kafka;
+using EncoreApi.Auth;
 using EncoreApi.Kafka;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EncoreApi;
 
@@ -24,6 +28,7 @@ public class Program
 
         BuildProducers(builder);
         BuildServices(builder);
+        BuildAuthentication(builder);
 
         var app = builder.Build();
 
@@ -33,6 +38,8 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.MapControllers();
         app.Run();
     }
@@ -65,5 +72,30 @@ public class Program
             client.BaseAddress = new Uri(
                 builder.Configuration["UserService:BaseUrl"] ?? UserServiceDefaultUrl);
         });
+        
+        builder.Services.AddSingleton<JwtService>();
+    }
+    
+    private static void BuildAuthentication(WebApplicationBuilder builder)
+    {
+        var jwtSecret = builder.Configuration["Jwt:Secret"] 
+                        ?? throw new InvalidOperationException("JWT secret not configured");
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(jwtSecret)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
+        builder.Services.AddAuthorization();
     }
 }

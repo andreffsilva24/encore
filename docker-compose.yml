@@ -57,6 +57,7 @@ services:
       echo 'Topics created.'
       "
 
+
   api:
     build:
       context: ./api
@@ -71,6 +72,9 @@ services:
       ASPNETCORE_URLS: http://+:8080
       Kafka__BootstrapServers: kafka:29092
       OrderService__BaseUrl: http://order-service:8081
+      UserService__BaseUrl: http://user-service:8084
+      Jwt__Secret: ${JWT_SECRET}
+      Jwt__ExpiryMinutes: 60
 
   order-db:
     image: postgres:16
