@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using EncoreApi.Kafka;
 using EncoreApi.Models.Events;
 using EncoreApi.Models.Requests;
@@ -61,6 +62,7 @@ public class OrdersController: ControllerBase
     [HttpGet("{orderId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status502BadGateway)]
     public async Task<IActionResult> GetOrder(Guid orderId)
     {
         var client = _httpClientFactory.CreateClient("OrderService");
@@ -77,6 +79,30 @@ public class OrdersController: ControllerBase
 
         _logger.LogError("Order Service returned {StatusCode} for order {OrderId}", response.StatusCode, orderId);
 
+        return StatusCode(502, new { message = "Order Service unavailable." });
+    }
+
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status502BadGateway)]
+    public async Task<IActionResult> GetOrders()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
+        
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+        
+        var client = _httpClientFactory.CreateClient("OrderService");
+        var response = await client.GetAsync($"/api/orders?userId={userId}");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return Content(content, "application/json");
+        }
+        
+        _logger.LogError("Order Service returned {StatusCode} for userId {UserId}", response.StatusCode, userId);
         return StatusCode(502, new { message = "Order Service unavailable." });
     }
 }
