@@ -1,13 +1,14 @@
 package com.encore.order_service.order;
 
 import com.encore.order_service.dto.OrderRequestedEvent;
+import com.encore.order_service.exceptions.OrderNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,7 +19,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public Order createOrder(OrderRequestedEvent event) {
+    public void createOrder(OrderRequestedEvent event) {
         Order order = new Order();
         order.setOrderId(event.orderId());
         order.setEventId(event.eventId());
@@ -29,7 +30,6 @@ public class OrderService {
 
         orderRepository.save(order);
         log.info("Order {} created with status PENDING", order.getOrderId());
-        return order;
     }
 
     @Transactional
@@ -43,9 +43,18 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<OrderResponse> findOrderResponseById(UUID orderId) {
+    public OrderResponse findOrderResponseById(UUID orderId) {
         return orderRepository.findById(orderId)
-                .map(OrderResponse::from);
+                .map(OrderResponse::from)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderResponse> findOrderResponsesByUserId(UUID userId) {
+        return orderRepository.findByUserId(userId)
+                .stream()
+                .map(OrderResponse::from)
+                .toList();
     }
 
     private void updateStatus(UUID orderId, OrderStatus status) {

@@ -1,0 +1,14 @@
+$kind: http-request
+name: Login
+order: 4000
+method: POST
+url: '{{user_service_url}}/api/users/login'
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "john.doe@example.com",
+      "password": "password123"
+    }

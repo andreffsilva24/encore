@@ -1,0 +1,3 @@
+$kind: collection
+name: User Service
+description: 'Internal Spring Boot user service. Runs on port 8084.'

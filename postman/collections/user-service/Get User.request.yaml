@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get User
+order: 2000
+method: GET
+url: '{{user_service_url}}/api/users/{{user_id}}'

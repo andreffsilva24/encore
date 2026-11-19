@@ -1,0 +1,16 @@
+$kind: http-request
+name: Create Order
+order: 1000
+method: POST
+url: '{{base_url}}/api/orders'
+headers:
+  Content-Type: application/json
+  Authorization: 'Bearer {{auth_token}}'
+body:
+  type: json
+  content: |-
+    {
+      "eventId": "00000000-0000-0000-0000-000000000001",
+      "userId": "00000000-0000-0000-0000-000000000002",
+      "seatIds": ["A1", "A2"]
+    }

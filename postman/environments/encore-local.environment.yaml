@@ -1,0 +1,26 @@
+name: Encore Local
+values:
+  - key: base_url
+    value: 'http://localhost:8080'
+    enabled: true
+    type: default
+  - key: order_service_url
+    value: 'http://localhost:8081'
+    enabled: true
+    type: default
+  - key: user_service_url
+    value: 'http://localhost:8084'
+    enabled: true
+    type: default
+  - key: auth_token
+    value: ''
+    enabled: true
+    type: default
+  - key: order_id
+    value: ''
+    enabled: true
+    type: default
+  - key: user_id
+    value: ''
+    enabled: true
+    type: default
